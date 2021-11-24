@@ -69,11 +69,18 @@ class PeaksLevels:
 
         ns_sum = 0
         for key in self.number_of_sensor.keys():
+            # print('key:', key)
             byte_offset = 32 + 4 * ns_sum
             ns = self.number_of_sensor[key]
             if ns > 0:
-                data = self.bytesToInt(frame[byte_offset:byte_offset + (4 * ns)]) / 10000
-                self.data[key] = data
+                for i in range(ns):
+                    print('i===', i)
+                    # data = self.bytesToInt(frame[byte_offset:byte_offset + (4 * ns)]) / 10000
+                    # data = self.bytesToInt(frame[byte_offset + (4 * i):byte_offset + (4 * (i + 1))]) / 10000
+                    # data = self.bytesToInt(frame[byte_offset + (ns * 4) + (4 * i):byte_offset + (ns * 4) + (4 * (i + 1))]) / 10000
+                    data = self.bytesToInt(frame[byte_offset + (i * 4):byte_offset + ((i+1) * 4)]) / 10000
+                    print('data:', data)
+                    self.data[key].append(data)
 
             ns_sum += ns
 
@@ -82,16 +89,20 @@ class PeaksLevels:
             byte_offset = 32 + (4 * ns_sum) + 2 * ns_sum_level
             ns = self.number_of_sensor[key]
             if ns > 0:
-                levles = self.bytesToInt(frame[byte_offset:byte_offset + (4 * ns)]) / 10000
-                self.levels[key] = levles
+                for i in range(ns):
+                    # levles = self.bytesToInt(frame[byte_offset:byte_offset + (4 * ns)]) / 10000
+                    levels = self.bytesToInt(frame[byte_offset + (i * 2):byte_offset + ((i+1) * 2)]) / 100
+                    print('level:', levels)
+                    self.levels[key].append(levels)
 
             ns_sum_level = + ns
 
-    def bytesToInt(self, bytes_data: bytes):
-        return int.from_bytes(bytes_data, byteorder='little')
+    def bytesToInt(self, bytes_data):
+        # print('bytes_data:', bytes_data)
+        return int.from_bytes(bytes_data, byteorder='little', signed=True)
 
     def getTimestamp(self):
-        return self.second + self.microseconds / 1000000
+        return self.seconds + self.microseconds / 1000000
 
     def getDateTime(self):
         return datetime.datetime.fromtimestamp(self.getTimestamp()).strftime('%Y-%m-%d %H:%M:%S')
@@ -100,17 +111,17 @@ class PeaksLevels:
         return self.serial_number
 
     def getNumberOfSensors(self):
-        return self.number_of_peaks
+        return self.number_of_sensor
 
     def getNumberOfSensor(self, ch):
-        if ch in self.number_of_peaks.keys():
+        if ch in self.number_of_sensor.keys():
             return self.number_of_sensor[ch]
 
     def getThermalStabilityFlag(self) -> int:
-        return self.int_from_bytes(self.thermal_stability_flag)
+        return self.thermal_stability_flag
 
     def getMuxState(self):
-        return self.int_from_bytes(self.mux_state)
+        return self.mux_state
 
     def getData(self):
         return self.data
@@ -128,20 +139,21 @@ class PeaksLevels:
 
     def __str__(self):
         return "- Datetime: {0}" \
-                "- Serial Number: {0}" \
-                "- Peaks1 (NS1): {0}" \
-                "- Peaks2 (NS2): {0}" \
-                "- Peaks3 (NS3): {0}" \
-                "- Peaks4 (NS4): {0}" \
-                "- Thermal Stability Flag: {0}" \
-                "- Ch1 Data: {0}" \
-                "- Ch2 Data: {0}" \
-                "- Ch3 Data: {0}" \
-                "- Ch4 Data: {0}" \
-                "- Ch1 Levels: {0}" \
-                "- Ch2 Levels: {0}" \
-                "- Ch3 Levels: {0}" \
-                "- Ch4 Levels: {0}".format(
+                "- Serial Number: {1}" \
+                "- Peaks1 (NS1): {2}" \
+                "- Peaks2 (NS2): {3}" \
+                "- Peaks3 (NS3): {4}" \
+                "- Peaks4 (NS4): {5}" \
+                "- Thermal Stability Flag: {6}" \
+                "- MUX State: {7}" \
+                "- Ch1 Data: {8}" \
+                "- Ch2 Data: {9}" \
+                "- Ch3 Data: {10}" \
+                "- Ch4 Data: {11}" \
+                "- Ch1 Levels: {12}" \
+                "- Ch2 Levels: {13}" \
+                "- Ch3 Levels: {14}" \
+                "- Ch4 Levels: {15}".format(
                     self.getDateTime(),
                     self.getSerialNumber(),
                     self.getNumberOfSensor('ch1'),
@@ -149,6 +161,7 @@ class PeaksLevels:
                     self.getNumberOfSensor('ch3'),
                     self.getNumberOfSensor('ch4'),
                     self.getThermalStabilityFlag(),
+                    self.getMuxState(),
                     self.getDataCh('ch1'),
                     self.getDataCh('ch2'),
                     self.getDataCh('ch3'),

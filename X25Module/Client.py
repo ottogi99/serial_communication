@@ -103,14 +103,14 @@ class X25:
 
     def getPeakAndLevel(self):
         loop = 0
-        self.socket.connect((self.host, self.port))
-        while loop < 10:
+        # self.socket.connect((self.host, self.port))
+        while loop < 20:
             self.socket.send('#GET_PEAKS_AND_LEVELS'.encode())
             log.info('Send command: {0}'.format('#GET_PEAKS_AND_LEVELS'.encode()))
 
             buffer = self.socket.recv(1024)
-            log.info('Received BINARY: {0}'.format(buffer))
-            log.info('Received BINARY length:'.format(len(buffer)))
+            # log.info('Received BINARY: {0}'.format(buffer))
+            # log.info('Received BINARY length:'.format(len(buffer)))
 
             pal = Protocol.PeaksLevels(buffer)
             log.info('Received Peaks And Level: {0}'.format(pal))
@@ -133,13 +133,14 @@ class X25:
             self.socket.connect((self.host, self.port))
         except socket.error as e:
             print('Socket connect failed')
-            print("Caught exception socket.error : %s".format(e))
+            print("Caught exception socket.error : {0}".format(e))
 
         print('Socket connected! {0}({1})'.format(self.host, self.port))
 
     def disconnect(self):
         self.socket.close()
         self.socket = None
+        print('Disconnected')
 
     def userCommand(self, command: str):
         self.socket.send(command.encode())
