@@ -212,6 +212,3 @@ class X25:
     #             _str += ("\n {0}".format(pal))
     #
     #     return _str
-
-
-
