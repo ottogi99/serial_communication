@@ -1,0 +1,17 @@
+;기본계산식(WL)
+;formula01 = (측정값-초기값)*GF1 + ((측정값-초기값)^2*GF2) + OFFSET
+;온도보정결과
+;formula03 = (formula02 - 온도보정(0))
+;단위보정결과
+;formula04 = (formula03 * 단위보정)
+;산출값(El.m)
+;formula05 = (EL - formula04)
+
+;플러라인
+;기본계산식 : (측정값-초기값)*GF1+OFFSET
+;formula01 = (측정값-초기값)*GF1+OFFSET
+;온도보정 : 0
+; 온도보정결과 : 기본계산식 + 온도보정
+;formula02 = formula01 + 0
+;단위보정결과 : ((온도보정결과*단위보정)-초기데이터)
+;formula03 = ((formula02 * 단위보정) - 초기데이터)
