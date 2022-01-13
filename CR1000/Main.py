@@ -214,9 +214,6 @@ class Formula:
 # print(datetime.strptime(df.loc[i, 'TIMESTAMP'], '%Y-%m-%d %H:%M:%S'))
 # print((df.loc[i, 'TIMESTAMP'], df.loc[i, 'RECORD'], df.loc[i, 'AVW_Avg(1,1)'], df.loc[i, 'AVW_Avg(2,1)']))
 
-def a():
-    pass
-
 def load_config(file):
     """
     ini 파일로 부터 환경설정 정보를 읽어들인다.
